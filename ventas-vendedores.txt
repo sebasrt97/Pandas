@@ -1,0 +1,34 @@
+db.vendedores.aggregate([
+	{
+		$lookup: {
+			from: "ventas",
+			localField: "nome",
+			foreignField: "vendedores",
+			as:"ventas"
+			}
+	},
+	{
+		$unwind: "$ventas"
+	},	
+	{
+		$project:{
+			_id:0,
+			"nome":"$nome",
+			"cidade":1,
+			"custo": "$ventas.custo"
+		}
+	},
+	{
+		$match:{
+			"custo":{
+				$gt : 100
+				}
+			}
+	},
+	{
+		$sort:{
+			"custo": -1
+			}
+	}
+
+])
